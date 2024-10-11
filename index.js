@@ -6,7 +6,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'))
 
 app.get('/', (request, response) => {
-    response.send('Hello from Yelp Camp')
+    response.send('Hello from Yelp Camp, How are you')
 })
 
 app.listen(8080, () => {
