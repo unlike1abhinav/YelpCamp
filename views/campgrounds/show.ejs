@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= foundcampground.title %></title>
+</head>
+<body>
+    <h1><%= foundcampground.title %></h1>
+    <h2><%= foundcampground.location %></h2>
+    <a href="/campgrounds">Go to Campgrounds Page</a>
+    <a href="/campgrounds/<%= foundcampground._id%>/edit">Edit Campground</a>
+    <form action="/campgrounds/<%= foundcampground._id%>/_method=DELETE" method="post">
+        <button>Delete Campground</button>
+    </form>
+</body>
+</html>
