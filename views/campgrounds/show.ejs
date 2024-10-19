@@ -1,35 +1,60 @@
 <% layout('layouts/boilerplate') %>
-<div class="row">
-    <div class="col-6 offset-3">
-        <div class="card" style="width: 36rem;">
-            <img src="<%= foundcampground.image %>" class="card-img-top" alt="...">
-            <div class="card-body">
-              <h5 class="card-title"><%= foundcampground.title %></h5>
-              <p class="card-text"><%= foundcampground.description %></p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"><%= foundcampground.location %></li>
-              <li class="list-group-item">$ <%= foundcampground.price %></li>
-            </ul>
-            <div class="card-body">
-                <a href="/campgrounds" class="card-link">Go to Campgrounds Page</a>
-                <a href="/campgrounds/<%= foundcampground._id%>/edit" class="card-link">Edit Campground</a>
-            </div>
-            <form action="/campgrounds/<%= foundcampground._id%>/_method=DELETE" method="post">
-                <button class="btn btn-danger">Delete Campground</button>
+  <div class="row">
+    <div class="col-6">
+      <div class="card" style="width: 36rem;">
+        <img src="<%= foundcampground.image %>" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">
+            <%= foundcampground.title %>
+          </h5>
+          <p class="card-text">
+            <%= foundcampground.description %>
+          </p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <%= foundcampground.location %>
+          </li>
+          <li class="list-group-item">$ <%= foundcampground.price %>
+          </li>
+        </ul>
+        <div class="card-body">
+          <a href="/campgrounds" class="card-link">Go to Campgrounds Page</a>
+          <a href="/campgrounds/<%= foundcampground._id%>/edit" class="card-link">Edit Campground</a>
+        </div>
+        <form action="/campgrounds/<%= foundcampground._id%>/_method=DELETE" method="post">
+          <button class="btn btn-danger">Delete Campground</button>
+        </form>
+      </div>
+    </div>
+    <div class="col-6">
+      <h2>Leave A Review</h2>
+      <form action="/campgrounds/<%= foundcampground._id %>/reviews" method="post" class="mb-3 needs-validation"
+        novalidate>
+        <div class="mb-3" style="width: 36rem;">
+          <label for="rating" class="form-label">Rating</label>
+          <input type="range" min="1" max="5" name="review[rating]" class="form-range" id="rating"> </textarea>
+        </div>
+        <div class="mb-3" style="width: 36rem;">
+          <label for="body" class="form-label">Review</label>
+          <textarea name="review[body]" class="form-control" id="body" cols="30" rows="10" required> </textarea>
+        </div>
+        <button class="btn btn-success">Success</button>
+      </form>
+      <% for( let review of foundcampground.reviews ) { %>
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">
+              Rating : <%= review.rating %>
+            </h5>
+            <p class="card-text">
+              Review : <%= review.body %>
+            </p>
+            <form action="/campgrounds/<%= foundcampground._id %>/reviews/<%= review._id %>?_method=DELETE" method="post">
+              <button class="btn btn-sm btn-danger">Delete Review</button>
             </form>
           </div>
-          <h2>Leave A Review</h2>
-          <form action="" class="mb-3">
-            <div class="mb-3" style="width: 36rem;">
-              <label for="rating" class="form-label">Rating</label>
-              <input type="range" min="1" max="5" name="review[rating]" class="form-range" id="rating" > </textarea>
-            </div>
-            <div class="mb-3" style="width: 36rem;">
-              <label for="body" class="form-label">Review</label>
-              <textarea name="review[body]" class="form-control" id="body" cols="30" rows="10"> </textarea>
-            </div>
-            <button class="btn btn-success">Success</button>
-          </form>
+        </div>
+        <% } %>
     </div>
-</div>
+  </div>

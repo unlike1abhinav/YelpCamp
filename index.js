@@ -8,7 +8,7 @@ const ExpressError = require('./utils/ExpressError')
 const mongoose = require("mongoose");
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
-
+const Review = require('./models/review');
 
 mongoose.connect('mongodb://127.0.0.1:27017/yelpCampground')
     .then(() => {
@@ -37,6 +37,24 @@ const validateCampground = (request, response, next) => {
         next();
     }
 }
+
+const validateReview = (request, response, next) => {
+    const reviewSchema = Joi.object({
+        review: Joi.object({
+            body: Joi.string().required(),
+            rating: Joi.number().required().min(0),
+        }).required()
+    })
+    const { error } = reviewSchema.validate(request.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    }
+    else{
+        next();
+    }
+}
+
 
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs');
@@ -67,7 +85,7 @@ app.post('/campgrounds', validateCampground, catchAsync(async (request, response
 
 app.get('/campgrounds/:id', catchAsync(async (request, respone) => {
     const { id } = request.params;
-    const foundcampground = await Campground.findById(id);
+    const foundcampground = await Campground.findById(id).populate('reviews');
     respone.render('campgrounds/show', { foundcampground })
 }))
 
@@ -87,6 +105,22 @@ app.delete('/campgrounds/:id', catchAsync(async (request, response) => {
     const { id } = request.params;
     await Campground.findByIdAndDelete(id);
     response.redirect('/campgrounds')
+}))
+
+app.post('/campgrounds/:id/reviews',validateReview, catchAsync( async (request, response) => {
+    const campground = await Campground.findById(request.params.id);
+    const review = new Review(request.body.review);
+    campground.reviews.push(review);
+    await review.save();
+    await campground.save();
+    response.redirect(`/campgrounds/${campground._id}`)
+}))
+
+app.delete('/campgrounds/:id/reviews/:reviewID', catchAsync(async (request, response) => {
+    const {id, reviewID} = request.params;
+    await Campground.findByIdAndUpdate(id, { $pull : { reviews : reviewID}});
+    await Review.findByIdAndDelete(reviewID);
+    response.redirect(`/campgrounds/${id}`)
 }))
 
 app.all('*', (request, response, next) => {
